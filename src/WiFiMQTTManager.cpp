@@ -78,13 +78,13 @@ void WiFiMQTTManager::setup(String sketchName) {
   WiFiManagerParameter custom_friendly_name("name", "Friendly Name", _friendly_name, 40);
   WiFiManagerParameter custom_mqtt_server("server", "MQTT Server", _mqtt_server, 40);
   WiFiManagerParameter custom_mqtt_port("port", "MQTT Port", _mqtt_port, 6);
-  //WiFiManagerParameter custom_mqtt_username("username", "mqtt username", _mqtt_username, 40);
-  //WiFiManagerParameter custom_mqtt_password("password", "mqtt password", _mqtt_password, 40);
+  WiFiManagerParameter custom_mqtt_username("username", "mqtt username", _mqtt_username, 40);
+  WiFiManagerParameter custom_mqtt_password("password", "mqtt password", _mqtt_password, 40);
   wm->addParameter(&custom_friendly_name);
   wm->addParameter(&custom_mqtt_server);
   wm->addParameter(&custom_mqtt_port);
-  //wm->addParameter(&custom_mqtt_username);
-  //wm->addParameter(&custom_mqtt_password); 
+  wm->addParameter(&custom_mqtt_username);
+  wm->addParameter(&custom_mqtt_password); 
 
   wm->setAPCallback([&](WiFiManager *myWiFiManager) {
     Serial.println("WMM: entering config mode...");
@@ -108,8 +108,8 @@ void WiFiMQTTManager::setup(String sketchName) {
   strcpy(_friendly_name, custom_friendly_name.getValue());
   strcpy(_mqtt_server, custom_mqtt_server.getValue());
   strcpy(_mqtt_port, custom_mqtt_port.getValue());
-  //strcpy(_mqtt_username, custom_mqtt_username.getValue());
-  //strcpy(_mqtt_password, custom_mqtt_password.getValue());
+  strcpy(_mqtt_username, custom_mqtt_username.getValue());
+  strcpy(_mqtt_password, custom_mqtt_password.getValue());
   
   //save the custom parameters to FS
   if (_shouldSaveConfig) {
@@ -119,8 +119,8 @@ void WiFiMQTTManager::setup(String sketchName) {
     json["friendly_name"] = _friendly_name;
     json["mqtt_server"] = _mqtt_server;
     json["mqtt_port"]   = _mqtt_port;
-    //json["mqtt_username"]   = _mqtt_username;
-    //json["mqtt_password"]   = _mqtt_password;
+    json["mqtt_username"]   = _mqtt_username;
+    json["mqtt_password"]   = _mqtt_password;
 
     File configFile = SPIFFS.open("/config.json", "w");
     if (!configFile) {
@@ -197,8 +197,8 @@ void WiFiMQTTManager::_setupSpiffs(){
           strcpy(_friendly_name, json["friendly_name"]);
           strcpy(_mqtt_server, json["mqtt_server"]);
           strcpy(_mqtt_port, json["mqtt_port"]);
-          //strcpy(_mqtt_username, json["mqtt_username"]);
-          //strcpy(_mqtt_password, json["mqtt_password"]);
+          strcpy(_mqtt_username, json["mqtt_username"]);
+          strcpy(_mqtt_password, json["mqtt_password"]);
         } else {
           Serial.println("WMM: failed to load json config...");
         }
